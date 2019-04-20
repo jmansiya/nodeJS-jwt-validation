@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 let jwt = require('jsonwebtoken');
 let config = require('./config');
 let middleware = require('./middleware');
+let redisCliente = require('./redisofile');
 
 class HandlerGenerator {
   login (req, res) {
@@ -21,6 +22,8 @@ class HandlerGenerator {
           }
         );
         // return the JWT token for the future API calls
+        redisCliente.setValue("index1", token);
+
         res.json({
           success: true,
           message: 'Authentication successful!',
