@@ -3,7 +3,7 @@ let redisCliente = require('./redisofile');
 const config = require('./config.js');
 let Person = require('./Person');
 
-let checkToken = (req, res, next) => {
+let checkToken = async (req, res, next) => {
   let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
   if (token.startsWith('Bearer ')) {
     // Remove Bearer from string
@@ -11,7 +11,9 @@ let checkToken = (req, res, next) => {
   }
 
   if (token) {
-    jwt.verify(token, config.secret, (err, decoded) => {
+    var persona1 = null;
+
+    await jwt.verify(token, config.secret, async (err, decoded) => {
       if (err) {
         return res.json({
           success: false,
@@ -20,18 +22,23 @@ let checkToken = (req, res, next) => {
       } else {
         console.log("Decoded: " + decoded);
         console.log("username: " + decoded.username);
-        let persona = redisCliente.getValue("Jose");
-        //console.log("Token obtenido : " + variableFromRedis);
+        var persona = await redisCliente.getValue("Jose");
 
-        console.log("Persona obtenida RECIBIDA: ");
+        console.log("Persona obtenida DENTRO: ");
         console.log("Nombre: " + persona.nombre);
         console.log("Apellidos: " + persona.apellidos);
         console.log("Edad: " + persona.edad);
 
+        persona1 = persona;
         req.decoded = decoded;
         next();
       }
     });
+
+    console.log("Persona obtenida FUERA: ");
+    console.log("Nombre: " + persona1.nombre);
+    console.log("Apellidos: " + persona1.apellidos);
+    console.log("Edad: " + persona1.edad);
   } else {
     return res.json({
       success: false,
