@@ -4,6 +4,7 @@ let jwt = require('jsonwebtoken');
 let config = require('./config');
 let middleware = require('./middleware');
 let redisCliente = require('./redisofile');
+let persona = require('./Person');
 
 class HandlerGenerator {
   login (req, res) {
@@ -15,14 +16,20 @@ class HandlerGenerator {
 
     if (username && password) {
       if (username === mockedUsername && password === mockedPassword) {
-        let token = jwt.sign({username: username},
+        let redisID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        let token = jwt.sign({
+          username: username,
+          redisID: redisID
+          },
           config.secret,
           {
             expiresIn: '24h' // expires in 24 hours
           }
         );
         // return the JWT token for the future API calls
-        redisCliente.setValue("index1", token);
+
+        persona = new persona(username, password, Math.random());
+        redisCliente.setValue(redisID, JSON.stringify(persona));
 
         res.json({
           success: true,

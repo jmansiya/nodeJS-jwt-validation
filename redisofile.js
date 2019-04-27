@@ -3,7 +3,7 @@
 const Person = require('./Person');
 let Redis = require('ioredis');
 var bluebird = require("bluebird");
-let client = bluebird.promisifyAll(new Redis(6379, '127.0.0.1'));
+let client = bluebird.promisifyAll(new Redis(6379, '52.17.215.151'));
 
 //let client = new Redis(6379, '127.0.0.1');
 
